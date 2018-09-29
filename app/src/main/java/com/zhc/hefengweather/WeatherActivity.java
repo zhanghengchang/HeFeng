@@ -1,5 +1,6 @@
 package com.zhc.hefengweather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.zhc.hefengweather.gson.Forecast;
 import com.zhc.hefengweather.gson.Weather;
+import com.zhc.hefengweather.service.AutoUpdateService;
 import com.zhc.hefengweather.util.HttpUtil;
 import com.zhc.hefengweather.util.Utility;
 
@@ -216,7 +218,7 @@ public class WeatherActivity extends AppCompatActivity {
         String degree = weather.now.temperature + "℃";
         String weatherInfo = weather.now.more.info;
         titleCity.setText(cityName);
-        titleUpdateTime.setText("更新时间："+updateTime);
+        titleUpdateTime.setText("\n更新时间\n"+"\t"+updateTime);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
@@ -244,6 +246,8 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 
 }
