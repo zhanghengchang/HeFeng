@@ -1,4 +1,4 @@
-<!-- 将实体类添加到映射列表当中 -->
+<!-- 创建数据库，将实体类添加到映射列表当中 -->
 <litepal>
 
     <dbname value="hefeng_weather"/>

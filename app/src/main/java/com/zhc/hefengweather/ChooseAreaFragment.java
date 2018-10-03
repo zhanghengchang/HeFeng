@@ -91,13 +91,16 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
-        // 初始化
+        // 加载指定碎片
         View view = inflater.inflate(R.layout.choose_area,container,false);
+        // 初始化控件
         titleText = view.findViewById(R.id.title_text);
         backButton = view.findViewById(R.id.back_button);
         listView = view.findViewById(R.id.list_view);
+        // 初始化ArrayAdapter适配器
         adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_list_item_1,
                 dataList);
+        // 给listView绑定adapter适配器
         listView.setAdapter(adapter);
         return view;
     }
@@ -109,12 +112,15 @@ public class ChooseAreaFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(currentLevel == LEVEL_PROVINCE){
+                    // 获取当前选中的省份
                     selectedProvince = provinceList.get(position);
                     queryCities();
                 }else if(currentLevel == LEVEL_CITY){
+                    // 获取当前选中的城市
                     selectedCity = cityList.get(position);
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY){
+                    // 获取当前选中的县级的weatherId
                     String weatherId = countyList.get(position).getWeatherId();
                     if(getActivity() instanceof MainActivity) {
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
@@ -133,6 +139,7 @@ public class ChooseAreaFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 根据当前级别来判断调用queryCities()还是queryProvinces()
                 if(currentLevel == LEVEL_COUNTY){
                     queryCities();
                 }else if(currentLevel == LEVEL_CITY){
@@ -140,25 +147,28 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
-        queryProvinces();
+        queryProvinces();// 首先查询全国所有的省
     }
 
     /**
      * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询
      */
     private void queryProvinces() {
-        titleText.setText("中国");
-        backButton.setVisibility(View.GONE);
+        titleText.setText("中国");// 设置标题
+        backButton.setVisibility(View.GONE);// 隐藏返回按钮
+        // 调用LitePal的查询接口来从数据库中读取省级数据
         provinceList = DataSupport.findAll(Province.class);
-        if(provinceList.size() > 0){
-            dataList.clear();
+        if(provinceList.size() > 0){// 若读取到，则直接将数据显示到界面上
+            dataList.clear();// 清除dataList
+            // 遍历数据库中的省级数据
             for(Province province : provinceList){
+                // 添加到listView的数据源中
                 dataList.add(province.getProvinceName());
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
-            currentLevel = LEVEL_PROVINCE;
-        }else{
+            adapter.notifyDataSetChanged();// 数据更新后需要更新适配器
+            listView.setSelection(0);// 设置当前选中的项
+            currentLevel = LEVEL_PROVINCE;// 设置选中的级别
+        }else{// 若未读取到，则组装一个请求地址，然后调用queryFromServer()方法来从服务器上查询数据
             String address = "http://guolin.tech/api/china";
             queryFromServer(address,"province");
         }
@@ -221,9 +231,12 @@ public class ChooseAreaFragment extends Fragment {
      */
     private void queryFromServer(String address,final String type) {
         showProgressDialog();
+        // 调用HttpUtil的sendOKHttpRequest()方法来向服务器发送请求
         HttpUtil.sendOKHttpRequest(address, new Callback() {
+            // 响应方法9
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                // 响应的数据
                 String responseText = response.body().string();
                 boolean result = false;
                 if("province".equals(type)){
@@ -236,6 +249,7 @@ public class ChooseAreaFragment extends Fragment {
                     result = Utility.handleCountyResponse(responseText,
                             selectedCity.getId());
                 }
+                // 涉及到UI操作，切换到主线程
                 if(result){
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -253,6 +267,7 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
 
+            // 加载失败
             @Override
             public void onFailure(Call call, IOException e) {
                 // 通过runOnUiThread()方法回到主线程处理逻辑

@@ -5,7 +5,7 @@ import org.litepal.crud.DataSupport;
 /**
  * Created by zhc on 2018/9/19.
  * 创建县级实体类并继承于LitePal的DataSupport类，
- * DataSupport将类连接到SQLite数据库
+ * DataSupport将实体类连接到SQLite数据库
  */
 
 public class County extends DataSupport {

@@ -42,6 +42,7 @@ public class AutoUpdateService extends Service {
         Intent i = new Intent(this,AutoUpdateService.class);
         PendingIntent pi = PendingIntent.getService(this,0,i,0);
         manager.cancel(pi);
+        // 每8小时更新一次
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,pi);
         return super.onStartCommand(intent, flags, startId);
     }

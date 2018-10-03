@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //  如果有缓存的数据，则跳转到WeatherActivity
         if(prefs.getString("weather",null) != null){
             Intent intent = new Intent(this,WeatherActivity.class);
             startActivity(intent);

@@ -5,7 +5,7 @@ import okhttp3.Request;
 
 /**
  * Created by zhc on 2018/9/25.
- * 与服务器交互的类
+ * 向服务器发送请求
  */
 
 public class HttpUtil {
